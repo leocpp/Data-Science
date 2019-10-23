@@ -1,21 +1,22 @@
-from flask import Flask, request, jasonify
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from sportsreference.nba.roster import Roster, Player
 from sportsreference.nba.player import AbstractPlayer
 from sportsreference.nba.teams import Teams
 
-APP = FLASK(__name__)
+APP = Flask(__name__)
 APP.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///current.sqlite3'
+APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 DB = SQLAlchemy(APP)
 
 
 class NBATeam(DB.Model):
-    abbr = DB.Column(DB.String(4), unique=True, nullable=False)
+    abbr = DB.Column(DB.String(4), primary_key=True, unique=True, nullable=False)
     name = DB.Column(DB.String(30), unique=True, nullable=False)
 
 
 class NBAPlayer(DB.Model):
-    ref_id = DB.Column(DB.String(10), unique=True, nullable=False)
+    ref_id = DB.Column(DB.String(10), primary_key=True, unique=True, nullable=False)
     name = DB.Column(DB.String(30), nullable=False)
     Team = DB.Column(DB.String(4), DB.ForeignKey('NBATeam.abbr'), nullable=False)
     FG_Pct = DB.Column(DB.Float, nullable=False)
@@ -33,13 +34,12 @@ class NBAPlayer(DB.Model):
 
 ######################
 teams = Teams()
-player = Player()
 teamabbs = []
 for team in teams:
     teamabbs.append(team.abbreviation)
 
 for abb in teamabbs:
-    squad = Roster(abb, slim)
+    squad = Roster(abb, slim=True)
     squaddict = squad.players
     squadIDs = list(squaddict.keys())
 
@@ -55,6 +55,7 @@ def add_teams(teams):
 
 def add_players(squadIDs):
     for id in squadIDs:
+        player = Player(id)
         nbaplayer = NBAPlayer(ref_id=player.player_id,
                               name=player.name,
                               Team=player.team_abbreviation,
@@ -72,4 +73,8 @@ def add_players(squadIDs):
         DB.session.add(nbaplayer)
 
 
-def predict_longevity()
+@APP.route('/')
+def root():
+    return "Hi"
+
+# def predict_longevity()
