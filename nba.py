@@ -51,6 +51,7 @@ def add_teams(teams):
         nbateam = NBATeam(abbr=team.abbreviation,
                           name=team.name)
         DB.session.add(nbateam)
+    DB.session.commit()
 
 
 def add_players(squadIDs):
@@ -71,6 +72,7 @@ def add_players(squadIDs):
                               VORP=player.value_over_replacement_player
                               )
         DB.session.add(nbaplayer)
+    DB.session.commit()
 
 
 @APP.route('/')

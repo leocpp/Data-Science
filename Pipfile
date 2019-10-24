@@ -7,8 +7,8 @@ verify_ssl = true
 
 [packages]
 flask = "*"
-flask-sqlalchemy = "*"
 sportsreference = "*"
+flask-sqlalchemy = "*"
 
 [requires]
 python_version = "3.6"
