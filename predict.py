@@ -104,20 +104,8 @@ ypred = xgbreg.predict(xvalencoded)  # We can check this agains yval
 # Now let's pickle our model
 pickle.dump(xgbreg, open('model.pkl', 'wb'))
 
-# Now that we have a model, let's make the test data convenient
-conn = sqlite3.connect('nbadb.sqlite3')
-cursor = conn.cursor()
-nbads = pd.read_sql("select * from nba_players;", conn)
-renamedict = {'name': 'Player', 'FG_Pct': 'FG_Percentage',
-              'TP_Pct': 'TP_Percentage', 'FT_Pct': 'FT_Percentage',
-              'Min_per_game': 'Minutes.per.Game',
-              'Pts_per_game': 'Points.per.Game', 'TRB_per_game': 'TRB.per.game',
-              'Asts_per_game': 'Assits.per.Game'}
-nbads = nbads.rename(columns=renamedict)
-reorderlist = ['Team', 'FG_Percentage', 'TP_Percentage', 'FT_Percentage',
-               'Minutes.per.Game', 'Points.per.Game', 'TRB.per.game',
-               'Assits.per.Game', 'WS_per_game', 'BPM', 'VORP', 'Player']
-nbads = nbads[reorderlist]
+# Now let's get the csv of current players
+nbads = pd.read_csv('nbads.csv')
 # Now we'll set up a test player, Ben Simmons (nbads index 213)
 chkdata = nbads[nbads['Player'] == 'Ben Simmons']
 xtestencoded = encoder.transform(chkdata.drop(columns=['Player', 'VORP']))
@@ -134,7 +122,7 @@ nghbr = NearestNeighbors(n_neighbors=1, algorithm='auto').fit(Xencoded)
 distance, idx = nghbr.kneighbors(xtestencoded)
 finfeats = feats + ['Player', 'Yrs']
 comppast = past[finfeats]
-compplayer = comppast.iloc[index[0]]
+compplayer = comppast.iloc[idx[0]]
 compresult = compplayer[['Player', 'Yrs']]
 print('A Comparable Historical Player is:', compresult)
 

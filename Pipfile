@@ -9,6 +9,8 @@ verify_ssl = true
 flask = "*"
 sportsreference = "*"
 flask-sqlalchemy = "*"
+category-encoders = "*"
+xgboost = "*"
 
 [requires]
 python_version = "3.6"
