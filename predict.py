@@ -3,10 +3,8 @@ import numpy as np
 import pandas as pd
 import category_encoders as ce
 import itertools
-import warnings
-import sqlite3
+# import warnings
 import requests
-import json
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
@@ -90,41 +88,52 @@ print(f"Baseline RMSE: {rmse(yval, ybase)}")
 
 # Now let's use XGBoost
 # We've already Optimized our Hyperparamaters
-warnings.simplefilter(action='ignore', category=FutureWarning)
-encoder = ce.OrdinalEncoder()
-xtrainencoded = encoder.fit_transform(xtrain[feats])
-xvalencoded = encoder.transform(xval[feats])
-eval_set = [(xtrainencoded, ytrain),
-            (xvalencoded, yval)]
-xgbreg = XGBRegressor(n_estimators=586, max_depth=7, n_jobs=-1)
-xgbreg.fit(xtrainencoded, ytrain,
-           eval_set=eval_set, eval_metric='rmse', early_stopping_rounds=50)
-ypred = xgbreg.predict(xvalencoded)  # We can check this agains yval
+xgbpipeline = make_pipeline(
+    ce.OrdinalEncoder(),
+    XGBRegressor(n_estimators=586, max_depth=7, n_jobs=-1,random_state=42)
+)
+xgbpipeline.fit(xtrain[feats],ytrain)
 
-# Now let's pickle our model
-pickle.dump(xgbreg, open('model.pkl', 'wb'))
+# Now let's pickle our pipeline
+pickle.dump(xgbpipeline, open('xgbpipe.pkl', 'wb'))
+        # warnings.simplefilter(action='ignore', category=FutureWarning)
+        # encoder = ce.OrdinalEncoder()
+        # xtrainencoded = encoder.fit_transform(xtrain[feats])
+        # xvalencoded = encoder.transform(xval[feats])
+        # eval_set = [(xtrainencoded, ytrain),
+        #             (xvalencoded, yval)]
+        # xgbreg = XGBRegressor(n_estimators=586, max_depth=7, n_jobs=-1)
+        # xgbreg.fit(xtrainencoded, ytrain,
+        #            eval_set=eval_set, eval_metric='rmse', early_stopping_rounds=50)
+        # ypred = xgbreg.predict(xvalencoded)  # We can check this agains yval
+
+        # # Now let's pickle our model
+        # pickle.dump(xgbreg, open('model.pkl', 'wb'))
 
 # Now let's get the csv of current players
 nbads = pd.read_csv('nbads.csv')
 # Now we'll set up a test player, Ben Simmons (nbads index 213)
 chkdata = nbads[nbads['Player'] == 'Ben Simmons']
-xtestencoded = encoder.transform(chkdata.drop(columns=['Player', 'VORP']))
+        # xtestencoded = encoder.transform(chkdata.drop(columns=['Player', 'VORP']))
 
 # Now let's load the model to find the result
-model = pickle.load(open('model.pkl', 'rb'))
-print('Predicted longevity of chosen player:', model.predict(xtestencoded))
+xgbpipe = pickle.load(open('xgbpipe.pkl', 'rb'))
+        # model = pickle.load(open('model.pkl', 'rb'))
+print('Predicted longevity of chosen player:', xgbpipe.predict(chkdata[feats]))
 
 # Now let's find a comparable historic player
-Xpast = past[feats]
-coder = ce.OrdinalEncoder()
-Xencoded = coder.fit_transform(Xpast)
-nghbr = NearestNeighbors(n_neighbors=1, algorithm='auto').fit(Xencoded)
-distance, idx = nghbr.kneighbors(xtestencoded)
-finfeats = feats + ['Player', 'Yrs']
-comppast = past[finfeats]
-compplayer = comppast.iloc[idx[0]]
-compresult = compplayer[['Player', 'Yrs']]
-print('A Comparable Historical Player is:', compresult)
+def comparrison(chkdata):
+    Xpast = past[feats]
+    coder = ce.OrdinalEncoder()
+    Xencoded = coder.fit_transform(Xpast)
+    chkcoded = coder.transform(chkdata[feats])
+    nghbr = NearestNeighbors(n_neighbors=1, algorithm='auto').fit(Xencoded)
+    distance, idx = nghbr.kneighbors(chkcoded)
+    finfeats = feats + ['Player', 'Yrs']
+    comppast = past[finfeats]
+    compplayer = comppast.iloc[idx[0]]
+    compresult = compplayer[['Player', 'Yrs']]
+    return compresult
 
-# Now let's pickle the Neighbor finder
-pickle.dump(nghbr, open('compare.pkl', 'wb'))
+
+print('A Comparable Historical Player is:', comparrison(chkdata))

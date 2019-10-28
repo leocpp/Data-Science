@@ -1,6 +1,6 @@
 import pickle
 import pandas as pd
-from predict import encoder, coder, nbads
+from .predict import feats, comparrison
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sportsreference.nba.roster import Roster, Player
@@ -16,16 +16,17 @@ DB = SQLAlchemy(APP)
 
 @APP.route('/', methods=['GET', 'POST'])
 def prediction():
-    model = pickle.load(open('model.pkl', 'rb'))
-    compare = pickle.load(open('compare.pkl', 'rb'))
+    xgbpipe = pickle.load(open('xgbpipe.pkl', 'rb'))
     askname = request.get_json(force=True, silent=True)
-    chkdata = nbads[nbads['Player'] == askname]
-    xtestencoded = encoder.transform(chkdata.drop(columns=['Player', 'VORP']))
-    longevity = model.predict(xtestencoded)
-    output1 = {longevity[0]}
-    distances, index = compare.kneighbors(xtestencoded)
-    comparable = comppast.iloc[index[0]]
-    output2 = {comparable[['Player', 'Yrs']]}
+    print(askname)
+    nbads = pd.read_csv('nbads.csv')
+    chkdata = nbads[nbads['Player'] == askname['Player']]
+    print(chkdata)
+    longevity = xgbpipe.predict(chkdata[feats])
+    output1 = {'Longevity' : str(longevity[0])}
+    comp = comparrison(chkdata)
+    result = comp.to_dict('index')
+    output2 = result
     return jsonify(output1, output2)
 
 

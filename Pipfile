@@ -11,6 +11,10 @@ sportsreference = "*"
 flask-sqlalchemy = "*"
 category-encoders = "*"
 xgboost = "*"
+sklearn = "*"
+pandas = "*"
+numpy = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.6"
