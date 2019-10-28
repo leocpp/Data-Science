@@ -1,1 +1,1 @@
-web: gunicorn nba:APP
+web: gunicorn nba:APP -t 120
