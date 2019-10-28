@@ -14,7 +14,11 @@ APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 DB = SQLAlchemy(APP)
 
 
-@APP.route('/', methods=['GET', 'POST'])
+@APP.route('/')
+def hi_there():
+    return "Hello, how's it going?"
+
+@APP.route('/predict', methods=['GET', 'POST'])
 def prediction():
     xgbpipe = pickle.load(open('xgbpipe.pkl', 'rb'))
     askname = request.get_json(force=True, silent=True)
@@ -31,4 +35,4 @@ def prediction():
 
 
 if __name__ == '__main__':
-    APP.run(port = 5000, debug=True)
+    APP.run()
