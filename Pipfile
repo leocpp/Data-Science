@@ -11,10 +11,10 @@ sportsreference = "*"
 flask-sqlalchemy = "*"
 category-encoders = "*"
 xgboost = "*"
-sklearn = "*"
 pandas = "*"
 numpy = "*"
 gunicorn = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.6"

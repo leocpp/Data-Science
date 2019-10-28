@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "98b2b0f6d28e8bd6632d62c21d0581b27e779ac0a9adb5a6af3e143542bc02db"
+            "sha256": "df0e37edb13e9bd6759bda63790ce778ff5f1e80616f049e9f6d11ec5a188cfe"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -274,6 +274,7 @@
                 "sha256:eb2b7bed0a26ba5ce3700e15938b28a4f4513578d3e54a2156c29df19ac5fd01",
                 "sha256:eb9b8ebf59eddd8b96366428238ab27d05a19e89c5516ce294abc35cea75d003"
             ],
+            "index": "pypi",
             "version": "==0.21.3"
         },
         "scipy": {
@@ -303,13 +304,6 @@
                 "sha256:d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"
             ],
             "version": "==1.12.0"
-        },
-        "sklearn": {
-            "hashes": [
-                "sha256:e23001573aa194b834122d2b9562459bf5ae494a2d59ca6b8aa22c85a44c0e31"
-            ],
-            "index": "pypi",
-            "version": "==0.0"
         },
         "sportsreference": {
             "hashes": [
