@@ -1,1 +1,1 @@
-web: gunicorn nba:APP -t 120
+web: gunicorn nba:APP --timeout 120
