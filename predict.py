@@ -83,8 +83,8 @@ def rmse(ytrue, ypred):
 # First we'll use the average NBA career length of 5 yrs
 avgyrs = 5
 ybase = np.full_like(yval, avgyrs)
-print('The Average Career of an NBA player is 5 Years')
-print(f"Baseline RMSE: {rmse(yval, ybase)}")
+## print('The Average Career of an NBA player is 5 Years')
+## print(f"Baseline RMSE: {rmse(yval, ybase)}")
 
 # Now let's use XGBoost
 # We've already Optimized our Hyperparamaters
@@ -117,9 +117,9 @@ chkdata = nbads[nbads['Player'] == 'Ben Simmons']
         # xtestencoded = encoder.transform(chkdata.drop(columns=['Player', 'VORP']))
 
 # Now let's load the model to find the result
-xgbpipe = pickle.load(open('xgbpipe.pkl', 'rb'))
+##xgbpipe = pickle.load(open('xgbpipe.pkl', 'rb'))
         # model = pickle.load(open('model.pkl', 'rb'))
-print('Predicted longevity of chosen player:', xgbpipe.predict(chkdata[feats]))
+##print('Predicted longevity of chosen player:', xgbpipe.predict(chkdata[feats]))
 
 # Now let's find a comparable historic player
 def comparrison(chkdata):
