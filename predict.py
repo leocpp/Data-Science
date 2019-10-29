@@ -30,6 +30,8 @@ rawpast = pd.read_csv("https://raw.githubusercontent.com/Build-Week-NBA-Longevit
 rawpast = rawpast[rawpast['Yrs'] != 0]
 past = rawpast[~rawpast['Player'].isin(mergednames)]
 
+
+print("Train Test Split")
 train, val = train_test_split(past, train_size=0.80, test_size=0.20,
                               random_state=42)
 
